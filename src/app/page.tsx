@@ -15,7 +15,7 @@ export default function HomePage() {
             src="/hero2.png"
             alt="Fight Theory — Calculated Picks. Real Fight Analysis."
             fill
-            className="object-cover object-bottom"
+            className="object-cover" style={{objectPosition: 'center 70%'}}
             priority
           />
           {/* Bottom fade */}
