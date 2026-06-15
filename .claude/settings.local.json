@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"C:\\\\Users\\\\quade\\\\OneDrive\\\\Desktop\\\\fighttheory\\\\src\" 2>&1)"
+    ]
+  }
+}

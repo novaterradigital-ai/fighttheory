@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --brand-red: #b01c1c;
+  --brand-red-dark: #8b1010;
+  --brand-red-light: #cc2020;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: #000000;
+  color: #ffffff;
+  font-family: var(--font-oswald), Arial, Helvetica, sans-serif;
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(192, 57, 43, 0.4);
+}
+
+.card-dark {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+}
+
+input, textarea, select {
+  color-scheme: dark;
+}
