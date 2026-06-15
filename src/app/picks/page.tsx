@@ -121,7 +121,7 @@ export default function PicksPage() {
               href="/inner-circle"
               className="inline-block px-8 py-3 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 cursor-pointer"
             >
-              Join Inner Circle — $67/mo
+              Join Inner Circle — $48/mo
             </Link>
           </div>
         </div>
