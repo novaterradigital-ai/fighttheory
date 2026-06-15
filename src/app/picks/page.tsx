@@ -125,6 +125,13 @@ export default function PicksPage() {
             </Link>
           </div>
         </div>
+
+        {/* Legal Disclaimer */}
+        <div className="mt-10 border-t border-[#1a1a1a] pt-8 pb-4 text-center">
+          <p className="text-gray-600 text-xs leading-relaxed max-w-2xl mx-auto">
+            Fight Theory does not facilitate wagering of any kind. All picks and analysis are provided for informational and entertainment purposes only. We are not a sportsbook and do not accept bets. Past results do not guarantee future performance. Please gamble responsibly and only wager what you can afford to lose. If you or someone you know has a gambling problem, call 1-800-GAMBLER.
+          </p>
+        </div>
       </div>
     </div>
   )
