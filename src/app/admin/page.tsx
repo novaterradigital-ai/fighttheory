@@ -43,7 +43,9 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
   onUsePick: (pick: Partial<{ fighter_a: string; fighter_b: string; pick: string; odds: string; units: string; analysis: string; event_name: string; fight_date: string }>) => void
   adminPassword: string
 }) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'props'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'props' | 'parlay'>('picks')
+  const [parlayLegs, setParlayLegs] = useState<Set<number>>(new Set())
+  const [parlayUnits, setParlayUnits] = useState('1')
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<AIPickResult[]>([])
   const [props, setProps] = useState<AIPropResult[]>([])
@@ -61,6 +63,7 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
     setSavedIds(new Set())
     try {
       const endpoint = activeTab === 'props' ? '/api/ai/props' : '/api/ai/analyze'
+      setParlayLegs(new Set())
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,19 +138,19 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
 
       {/* Tabs */}
       <div className="flex gap-1 mb-5 border-b border-[#1a1a1a]">
-        {(['picks', 'props'] as const).map((tab) => (
+        {(['picks', 'props', 'parlay'] as const).map((tab) => (
           <button
             key={tab}
-            onClick={() => { setActiveTab(tab); setError(''); setResults([]); setProps([]) }}
+            onClick={() => { setActiveTab(tab); setError(''); setResults([]); setProps([]); setParlayLegs(new Set()) }}
             className={`px-4 py-2 text-xs font-black uppercase tracking-widest transition-colors cursor-pointer border-b-2 -mb-px ${activeTab === tab ? 'border-[#b01c1c] text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
           >
-            {tab === 'picks' ? 'Fight Picks' : 'Prop Bets'}
+            {tab === 'picks' ? 'Fight Picks' : tab === 'props' ? 'Prop Bets' : 'Parlay Builder'}
           </button>
         ))}
       </div>
 
       <p className="text-xs text-gray-500 mb-4">
-        {activeTab === 'picks' ? 'Pull live odds and get AI pick recommendations' : 'AI-generated prop bet recommendations — verify lines at your sportsbook'}
+        {activeTab === 'picks' ? 'Pull live odds and get AI pick recommendations' : activeTab === 'props' ? 'AI-generated prop bet recommendations — verify lines at your sportsbook' : 'Select fight picks to build a parlay — pulls AI picks first'}
       </p>
 
       <div className="flex gap-3 mb-5">
@@ -233,7 +236,116 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
         </div>
       )}
 
-      {results.length > 0 && (
+      {/* Parlay Builder */}
+      {activeTab === 'parlay' && results.length === 0 && !loading && !error && (
+        <p className="text-gray-500 text-sm">Click Analyze to load fights, then select legs to build your parlay.</p>
+      )}
+      {activeTab === 'parlay' && results.length > 0 && (() => {
+        function toDecimal(odds: string): number {
+          const n = parseInt(odds)
+          if (isNaN(n)) return 1
+          return n > 0 ? n / 100 + 1 : 100 / Math.abs(n) + 1
+        }
+        const legs = results.filter((_, i) => parlayLegs.has(i))
+        const parlayDecimal = legs.reduce((acc, r) => acc * toDecimal(r.odds), 1)
+        const parlayAmerican = parlayDecimal >= 2
+          ? `+${Math.round((parlayDecimal - 1) * 100)}`
+          : `-${Math.round(100 / (parlayDecimal - 1))}`
+        const units = parseFloat(parlayUnits) || 1
+        const payout = ((parlayDecimal - 1) * units).toFixed(2)
+
+        return (
+          <div className="flex flex-col gap-3">
+            <p className="text-xs text-gray-500 uppercase tracking-widest">Select legs for your parlay:</p>
+            {results.map((r, i) => (
+              <div
+                key={i}
+                onClick={() => setParlayLegs((prev) => {
+                  const next = new Set(prev)
+                  next.has(i) ? next.delete(i) : next.add(i)
+                  return next
+                })}
+                className={`flex items-center gap-3 bg-[#111] border rounded-lg px-4 py-3 cursor-pointer transition-all ${parlayLegs.has(i) ? 'border-[#b01c1c] bg-[#b01c1c]/5' : 'border-[#1a1a1a] hover:border-[#333]'}`}
+              >
+                <div className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${parlayLegs.has(i) ? 'bg-[#b01c1c] border-[#b01c1c]' : 'border-[#444]'}`}>
+                  {parlayLegs.has(i) && <span className="text-white text-xs">✓</span>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-black text-sm">{r.pick}</p>
+                  <p className="text-gray-500 text-xs">{r.fight} · {r.odds}</p>
+                </div>
+              </div>
+            ))}
+
+            {legs.length >= 2 && (
+              <div className="bg-[#0d0d0d] border border-[#b01c1c]/40 rounded-lg p-4 mt-2">
+                <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">{legs.length}-Leg Parlay</p>
+                {legs.map((r, i) => (
+                  <p key={i} className="text-gray-300 text-xs mb-1">• {r.pick} ({r.odds})</p>
+                ))}
+                <div className="border-t border-[#1a1a1a] mt-3 pt-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Parlay Odds</p>
+                    <p className="text-white font-black text-lg">{parlayAmerican}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Units</p>
+                    <input
+                      value={parlayUnits}
+                      onChange={(e) => setParlayUnits(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-16 bg-[#111] border border-[#2a2a2a] rounded px-2 py-1 text-white text-sm text-center outline-none focus:border-[#b01c1c]"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Potential Win</p>
+                    <p className="text-green-400 font-black text-lg">+{payout}u</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <button
+                    onClick={async () => {
+                      const legsText = legs.map((r) => `${r.pick} (${r.odds})`).join(' + ')
+                      const msg = `🎰 **FIGHT THEORY PARLAY**\n\n${legs.map((r) => `• **${r.pick}** (${r.odds}) — ${r.fight}`).join('\n')}\n\n📊 Parlay Odds: **${parlayAmerican}**\n💰 ${units}u to win +${payout}u\n\n_Fight Theory — Calculated Picks. Real Fight Analysis._`
+                      await fetch('/api/discord', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: msg }),
+                      })
+                    }}
+                    className="px-3 py-1.5 border border-[#2a2a2a] text-gray-400 text-xs font-black uppercase tracking-widest rounded hover:border-white hover:text-white transition-colors cursor-pointer"
+                  >
+                    Post to Discord
+                  </button>
+                  <button
+                    onClick={() => {
+                      const legsText = legs.map((r) => `${r.pick} (${r.odds}): ${r.reasoning}`).join('\n\n')
+                      onUsePick({
+                        pick: `${legs.length}-Leg Parlay`,
+                        odds: parlayAmerican,
+                        units: parlayUnits,
+                        analysis: legsText,
+                        event_name: legs[0]?.event ?? '',
+                        fight_date: legs[0]?.date ?? '',
+                      })
+                      document.getElementById('add-pick-form')?.scrollIntoView({ behavior: 'smooth' })
+                    }}
+                    className="px-3 py-1.5 bg-[#b01c1c] text-white text-xs font-black uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors cursor-pointer"
+                  >
+                    Use as Pick
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {legs.length < 2 && (
+              <p className="text-gray-600 text-xs">Select at least 2 legs to build a parlay.</p>
+            )}
+          </div>
+        )
+      })()}
+
+      {activeTab === 'picks' && results.length > 0 && (
         <div className="flex flex-col gap-4">
           {results.map((r, i) => (
             <div key={i} className="bg-[#111] border border-[#1a1a1a] rounded-lg p-5">
