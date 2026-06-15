@@ -17,6 +17,18 @@ type AIPickResult = {
   date: string
 }
 
+type AIPropResult = {
+  fight: string
+  event: string
+  date: string
+  prop_type: string
+  pick: string
+  confidence: number
+  units: number
+  reasoning: string
+  note: string
+}
+
 function ConfidenceDots({ value }: { value: number }) {
   return (
     <div className="flex gap-1">
@@ -31,8 +43,10 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
   onUsePick: (pick: Partial<{ fighter_a: string; fighter_b: string; pick: string; odds: string; units: string; analysis: string; event_name: string; fight_date: string }>) => void
   adminPassword: string
 }) {
+  const [activeTab, setActiveTab] = useState<'picks' | 'props'>('picks')
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<AIPickResult[]>([])
+  const [props, setProps] = useState<AIPropResult[]>([])
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
   const [postingDiscord, setPostingDiscord] = useState<number | null>(null)
@@ -43,17 +57,24 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
     setLoading(true)
     setError('')
     setResults([])
+    setProps([])
     setSavedIds(new Set())
     try {
-      const res = await fetch('/api/ai/analyze', {
+      const endpoint = activeTab === 'props' ? '/api/ai/props' : '/api/ai/analyze'
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: query || 'upcoming' }),
       })
       const data = await res.json()
       if (data.error) { setError(data.error); return }
-      setResults(data.analysis ?? [])
-      if ((data.analysis ?? []).length === 0) setError('No fights found. Try a different search or leave blank for all upcoming.')
+      if (activeTab === 'props') {
+        setProps(data.props ?? [])
+        if ((data.props ?? []).length === 0) setError('No prop bets found. Try a different search.')
+      } else {
+        setResults(data.analysis ?? [])
+        if ((data.analysis ?? []).length === 0) setError('No fights found. Try a different search or leave blank for all upcoming.')
+      }
     } catch {
       setError('Analysis failed. Check your API keys.')
     } finally {
@@ -111,7 +132,23 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
       <h2 className="text-lg font-black uppercase tracking-wide mb-1">
         AI Fight <span className="text-[#b01c1c]">Analyzer</span>
       </h2>
-      <p className="text-xs text-gray-500 mb-5">Pull live odds and get AI pick recommendations</p>
+
+      {/* Tabs */}
+      <div className="flex gap-1 mb-5 border-b border-[#1a1a1a]">
+        {(['picks', 'props'] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => { setActiveTab(tab); setError(''); setResults([]); setProps([]) }}
+            className={`px-4 py-2 text-xs font-black uppercase tracking-widest transition-colors cursor-pointer border-b-2 -mb-px ${activeTab === tab ? 'border-[#b01c1c] text-white' : 'border-transparent text-gray-500 hover:text-gray-300'}`}
+          >
+            {tab === 'picks' ? 'Fight Picks' : 'Prop Bets'}
+          </button>
+        ))}
+      </div>
+
+      <p className="text-xs text-gray-500 mb-4">
+        {activeTab === 'picks' ? 'Pull live odds and get AI pick recommendations' : 'AI-generated prop bet recommendations — verify lines at your sportsbook'}
+      </p>
 
       <div className="flex gap-3 mb-5">
         <input
@@ -131,6 +168,70 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
       </div>
 
       {error && <p className="text-[#b01c1c] text-sm mb-4">{error}</p>}
+
+      {/* Props Results */}
+      {props.length > 0 && (
+        <div className="flex flex-col gap-4">
+          {props.map((p, i) => (
+            <div key={i} className="bg-[#111] border border-[#1a1a1a] rounded-lg p-5">
+              <div className="flex items-start justify-between gap-4 mb-2">
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">{p.event} · {p.date}</p>
+                  <p className="text-white font-black text-sm">{p.fight}</p>
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#b01c1c] bg-[#b01c1c]/10 border border-[#b01c1c]/30 px-2 py-1 rounded flex-shrink-0">
+                  {p.prop_type}
+                </span>
+              </div>
+              <p className="text-white font-black text-base mb-3">{p.pick}</p>
+              <div className="flex items-center gap-4 mb-3">
+                <div>
+                  <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Confidence</p>
+                  <ConfidenceDots value={p.confidence} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Units</p>
+                  <p className="text-white font-black text-sm">{p.units}u</p>
+                </div>
+              </div>
+              <p className="text-gray-400 text-xs leading-relaxed mb-2">{p.reasoning}</p>
+              <p className="text-yellow-600 text-xs italic mb-4">{p.note}</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    onUsePick({
+                      fighter_a: p.fight.split(' vs ')[0]?.trim(),
+                      fighter_b: p.fight.split(' vs ')[1]?.trim(),
+                      pick: p.pick,
+                      units: String(p.units),
+                      analysis: p.reasoning,
+                      event_name: p.event,
+                      fight_date: p.date,
+                    })
+                    document.getElementById('add-pick-form')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="px-3 py-1.5 bg-[#b01c1c] text-white text-xs font-black uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors cursor-pointer"
+                >
+                  Use This Pick
+                </button>
+                <button
+                  onClick={async () => {
+                    const msg = `🎯 **FIGHT THEORY PROP BET**\n\n**${p.fight}**\n📅 ${p.date}\n\n**${p.prop_type}**\n✅ **Pick: ${p.pick}**\n📊 Units: ${p.units}u | Confidence: ${'⭐'.repeat(p.confidence)}\n\n${p.reasoning}\n\n⚠️ ${p.note}\n\n_Fight Theory — Calculated Picks. Real Fight Analysis._`
+                    await fetch('/api/discord', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ content: msg }),
+                    })
+                  }}
+                  className="px-3 py-1.5 border border-[#2a2a2a] text-gray-400 text-xs font-black uppercase tracking-widest rounded hover:border-white hover:text-white transition-colors cursor-pointer"
+                >
+                  Post to Discord
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {results.length > 0 && (
         <div className="flex flex-col gap-4">
