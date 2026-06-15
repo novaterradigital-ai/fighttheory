@@ -9,7 +9,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="w-full">
+      <section className="w-full pt-16">
         {/* Hero image — fades into black at bottom */}
         <div className="relative w-full overflow-hidden">
           <Image
