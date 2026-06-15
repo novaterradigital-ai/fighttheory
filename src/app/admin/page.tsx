@@ -2,6 +2,108 @@
 
 import { useEffect, useState, useCallback } from 'react'
 
+type AIPickResult = {
+  fight: string
+  pick: string
+  odds: string
+  confidence: number
+  reasoning: string
+  event: string
+}
+
+function AIAnalyzer({ onUsePick }: { onUsePick: (pick: Partial<{ fighter_a: string; fighter_b: string; pick: string; odds: string; analysis: string; event_name: string }>) => void }) {
+  const [loading, setLoading] = useState(false)
+  const [results, setResults] = useState<AIPickResult[]>([])
+  const [error, setError] = useState('')
+  const [query, setQuery] = useState('')
+
+  async function runAnalysis() {
+    setLoading(true)
+    setError('')
+    setResults([])
+    try {
+      const res = await fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: query || 'upcoming' }),
+      })
+      const data = await res.json()
+      if (data.error) { setError(data.error); return }
+      setResults(data.analysis ?? [])
+      if ((data.analysis ?? []).length === 0) setError('No fights found. Try a different search.')
+    } catch {
+      setError('Analysis failed. Check your API keys.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="bg-[#0a0a0a] border border-[#b01c1c]/30 rounded-lg p-6 mb-10">
+      <h2 className="text-lg font-black uppercase tracking-wide mb-1">
+        AI Fight <span className="text-[#b01c1c]">Analyzer</span>
+      </h2>
+      <p className="text-xs text-gray-500 mb-5">Pull live odds and get AI pick recommendations</p>
+
+      <div className="flex gap-3 mb-5">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search fighter or event (or leave blank for all upcoming)"
+          className="flex-1 bg-[#111] border border-[#2a2a2a] rounded px-4 py-2.5 text-white text-sm outline-none focus:border-[#b01c1c] transition-colors"
+        />
+        <button
+          onClick={runAnalysis}
+          disabled={loading}
+          className="px-6 py-2.5 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors disabled:opacity-50 cursor-pointer"
+        >
+          {loading ? 'Analyzing...' : 'Analyze'}
+        </button>
+      </div>
+
+      {error && <p className="text-[#b01c1c] text-sm mb-4">{error}</p>}
+
+      {results.length > 0 && (
+        <div className="flex flex-col gap-4">
+          {results.map((r, i) => (
+            <div key={i} className="bg-[#111] border border-[#1a1a1a] rounded-lg p-4">
+              <div className="flex items-start justify-between gap-4 mb-2">
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">{r.event}</p>
+                  <p className="text-white font-black text-sm">{r.fight}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-[#b01c1c] font-black text-sm">{r.pick}</p>
+                  <p className="text-gray-400 text-xs">{r.odds}</p>
+                  <p className="text-gray-600 text-xs">Confidence: {r.confidence}/5</p>
+                </div>
+              </div>
+              <p className="text-gray-400 text-xs leading-relaxed mb-3">{r.reasoning}</p>
+              <button
+                onClick={() => {
+                  const [fa, fb] = r.fight.split(' vs ')
+                  onUsePick({
+                    fighter_a: fa?.trim() ?? '',
+                    fighter_b: fb?.trim() ?? '',
+                    pick: r.pick,
+                    odds: r.odds,
+                    analysis: r.reasoning,
+                    event_name: r.event,
+                  })
+                  window.scrollTo({ top: document.getElementById('add-pick-form')?.offsetTop ?? 0, behavior: 'smooth' })
+                }}
+                className="text-xs font-bold uppercase tracking-widest text-[#b01c1c] hover:text-white transition-colors cursor-pointer"
+              >
+                Use This Pick →
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 type Pick = {
   id: string
   created_at: string
@@ -301,8 +403,11 @@ export default function AdminPage() {
           ))}
         </div>
 
+        {/* AI Analyzer */}
+        <AIAnalyzer onUsePick={(pick) => setForm((f) => ({ ...f, ...pick }))} />
+
         {/* Add New Pick */}
-        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-6 mb-10">
+        <div id="add-pick-form" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-6 mb-10">
           <h2 className="text-lg font-black uppercase tracking-wide mb-6">
             Add New <span className="text-[#b01c1c]">Pick</span>
           </h2>
