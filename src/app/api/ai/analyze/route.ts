@@ -43,7 +43,7 @@ async function fetchOdds(sport: string, apiKey: string): Promise<FightOdds[]> {
       const oddsB = outcomes.find((o) => o.name === e.away_team)?.price ?? null
 
       return {
-        event: `${e.sport_title}`,
+        event: e.sport_title,
         sport: e.sport_title,
         date: e.commence_time,
         fighter_a: e.home_team,
@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
 
     const allEvents = [...mmaEvents, ...boxingEvents]
 
-    // Filter by query if provided
     const filtered =
       query && query !== 'upcoming'
         ? allEvents.filter(
@@ -86,10 +85,9 @@ export async function POST(req: NextRequest) {
         : allEvents
 
     if (filtered.length === 0) {
-      return NextResponse.json({ analysis: [], fights_found: 0 })
+      return NextResponse.json({ analysis: [], fights_found: 0, raw_fights: [] })
     }
 
-    // Limit to 10 fights to avoid token limits
     const limited = filtered.slice(0, 10)
 
     const oddsText = limited
@@ -103,13 +101,13 @@ export async function POST(req: NextRequest) {
 
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 2048,
+      max_tokens: 3000,
       system:
-        'You are Fight Theory\'s AI fight analyst. You are a sharp combat sports bettor with deep knowledge of MMA and boxing. Analyze fights with cold logic — look at styles, recent form, betting line movement, and public betting percentages. Give confident, specific pick recommendations with reasoning. Format output as JSON only — no markdown, no prose outside the JSON array.',
+        "You are Fight Theory's AI fight analyst. You are a sharp combat sports bettor with deep knowledge of MMA and boxing. Analyze fights with cold logic — styles, recent form, line value, matchup edges. Give confident picks with clear reasoning. Format output as JSON only — no markdown, no prose outside the JSON array.",
       messages: [
         {
           role: 'user',
-          content: `Here are the current fight odds:\n\n${oddsText}\n\nAnalyze each matchup and return a JSON array. Each object must have these exact fields:\n- fight: "Fighter A vs Fighter B"\n- pick: the fighter you recommend\n- odds: the American odds for your pick (e.g. "+150" or "-200")\n- confidence: integer 1-5\n- reasoning: 2-3 sentence explanation\n- event: event name\n\nReturn ONLY the raw JSON array, no other text.`,
+          content: `Here are the current fight odds:\n\n${oddsText}\n\nAnalyze each matchup and return a JSON array. Each object must have these exact fields:\n- fight: "Fighter A vs Fighter B"\n- fighter_a: first fighter name\n- fighter_b: second fighter name  \n- odds_a: odds for fighter_a as string (e.g. "+150" or "-200")\n- odds_b: odds for fighter_b as string\n- pick: the fighter you recommend\n- odds: the American odds for your pick as string\n- confidence: integer 1-5\n- units: recommended bet size 0.5 to 3 based on confidence and value\n- reasoning: 3-4 sentence detailed breakdown of the matchup and why you like this pick\n- event: event name\n- date: fight date as YYYY-MM-DD\n\nReturn ONLY the raw JSON array, no other text.`,
         },
       ],
     })
@@ -117,7 +115,6 @@ export async function POST(req: NextRequest) {
     const rawText =
       message.content[0]?.type === 'text' ? message.content[0].text : '[]'
 
-    // Strip any accidental markdown fences
     const cleaned = rawText.replace(/```json?\n?/g, '').replace(/```/g, '').trim()
 
     let analysis
@@ -127,7 +124,7 @@ export async function POST(req: NextRequest) {
       analysis = []
     }
 
-    return NextResponse.json({ analysis, fights_found: limited.length })
+    return NextResponse.json({ analysis, fights_found: limited.length, raw_fights: limited })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Analysis failed'
     return NextResponse.json({ error: message }, { status: 500 })

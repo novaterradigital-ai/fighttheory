@@ -4,23 +4,46 @@ import { useEffect, useState, useCallback } from 'react'
 
 type AIPickResult = {
   fight: string
+  fighter_a: string
+  fighter_b: string
+  odds_a: string
+  odds_b: string
   pick: string
   odds: string
   confidence: number
+  units: number
   reasoning: string
   event: string
+  date: string
 }
 
-function AIAnalyzer({ onUsePick }: { onUsePick: (pick: Partial<{ fighter_a: string; fighter_b: string; pick: string; odds: string; analysis: string; event_name: string }>) => void }) {
+function ConfidenceDots({ value }: { value: number }) {
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className={`w-2 h-2 rounded-full ${i < value ? 'bg-[#b01c1c]' : 'bg-[#2a2a2a]'}`} />
+      ))}
+    </div>
+  )
+}
+
+function AIAnalyzer({ onUsePick, adminPassword }: {
+  onUsePick: (pick: Partial<{ fighter_a: string; fighter_b: string; pick: string; odds: string; units: string; analysis: string; event_name: string; fight_date: string }>) => void
+  adminPassword: string
+}) {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<AIPickResult[]>([])
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
+  const [postingDiscord, setPostingDiscord] = useState<number | null>(null)
+  const [savingPick, setSavingPick] = useState<number | null>(null)
+  const [savedIds, setSavedIds] = useState<Set<number>>(new Set())
 
   async function runAnalysis() {
     setLoading(true)
     setError('')
     setResults([])
+    setSavedIds(new Set())
     try {
       const res = await fetch('/api/ai/analyze', {
         method: 'POST',
@@ -30,11 +53,56 @@ function AIAnalyzer({ onUsePick }: { onUsePick: (pick: Partial<{ fighter_a: stri
       const data = await res.json()
       if (data.error) { setError(data.error); return }
       setResults(data.analysis ?? [])
-      if ((data.analysis ?? []).length === 0) setError('No fights found. Try a different search.')
+      if ((data.analysis ?? []).length === 0) setError('No fights found. Try a different search or leave blank for all upcoming.')
     } catch {
       setError('Analysis failed. Check your API keys.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function postToDiscord(r: AIPickResult, i: number) {
+    setPostingDiscord(i)
+    try {
+      const msg = `🥊 **FIGHT THEORY PICK**\n\n**${r.fight}**\n📅 ${r.date}\n\n✅ **Pick: ${r.pick}** (${r.odds})\n📊 Units: ${r.units}u | Confidence: ${'⭐'.repeat(r.confidence)}\n\n${r.reasoning}\n\n_Fight Theory — Calculated Picks. Real Fight Analysis._`
+      await fetch('/api/discord', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: msg }),
+      })
+    } catch {
+      // silent
+    } finally {
+      setPostingDiscord(null)
+    }
+  }
+
+  async function saveDraft(r: AIPickResult, i: number) {
+    setSavingPick(i)
+    try {
+      const res = await fetch('/api/admin/picks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPassword },
+        body: JSON.stringify({
+          event_name: r.event,
+          fight_date: r.date || new Date().toISOString().split('T')[0],
+          fighter_a: r.fighter_a || r.fight.split(' vs ')[0]?.trim(),
+          fighter_b: r.fighter_b || r.fight.split(' vs ')[1]?.trim(),
+          pick: r.pick,
+          odds: r.odds,
+          units: r.units || 1,
+          tier: 'FREE',
+          analysis: r.reasoning,
+          is_live: false,
+          result: 'PENDING',
+          profit_loss: 0,
+        }),
+      })
+      if (res.ok) setSavedIds((prev) => new Set([...prev, i]))
+    } catch {
+      // silent
+    } finally {
+      setSavingPick(null)
     }
   }
 
@@ -49,6 +117,7 @@ function AIAnalyzer({ onUsePick }: { onUsePick: (pick: Partial<{ fighter_a: stri
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && runAnalysis()}
           placeholder="Search fighter or event (or leave blank for all upcoming)"
           className="flex-1 bg-[#111] border border-[#2a2a2a] rounded px-4 py-2.5 text-white text-sm outline-none focus:border-[#b01c1c] transition-colors"
         />
@@ -66,36 +135,81 @@ function AIAnalyzer({ onUsePick }: { onUsePick: (pick: Partial<{ fighter_a: stri
       {results.length > 0 && (
         <div className="flex flex-col gap-4">
           {results.map((r, i) => (
-            <div key={i} className="bg-[#111] border border-[#1a1a1a] rounded-lg p-4">
-              <div className="flex items-start justify-between gap-4 mb-2">
+            <div key={i} className="bg-[#111] border border-[#1a1a1a] rounded-lg p-5">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4 mb-3">
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">{r.event}</p>
-                  <p className="text-white font-black text-sm">{r.fight}</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">{r.event} · {r.date}</p>
+                  <p className="text-white font-black text-base">{r.fight}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-[#b01c1c] font-black text-sm">{r.pick}</p>
-                  <p className="text-gray-400 text-xs">{r.odds}</p>
-                  <p className="text-gray-600 text-xs">Confidence: {r.confidence}/5</p>
+                  <p className="text-[#b01c1c] font-black text-base">{r.pick}</p>
+                  <p className="text-white font-bold text-sm">{r.odds}</p>
                 </div>
               </div>
-              <p className="text-gray-400 text-xs leading-relaxed mb-3">{r.reasoning}</p>
-              <button
-                onClick={() => {
-                  const [fa, fb] = r.fight.split(' vs ')
-                  onUsePick({
-                    fighter_a: fa?.trim() ?? '',
-                    fighter_b: fb?.trim() ?? '',
-                    pick: r.pick,
-                    odds: r.odds,
-                    analysis: r.reasoning,
-                    event_name: r.event,
-                  })
-                  window.scrollTo({ top: document.getElementById('add-pick-form')?.offsetTop ?? 0, behavior: 'smooth' })
-                }}
-                className="text-xs font-bold uppercase tracking-widest text-[#b01c1c] hover:text-white transition-colors cursor-pointer"
-              >
-                Use This Pick →
-              </button>
+
+              {/* Odds comparison */}
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                <div className={`rounded px-3 py-2 text-center text-xs font-bold ${r.pick === r.fighter_a ? 'bg-[#b01c1c]/20 border border-[#b01c1c]/40' : 'bg-[#0a0a0a] border border-[#1a1a1a]'}`}>
+                  <p className="text-gray-400 text-xs mb-0.5">{r.fighter_a || r.fight.split(' vs ')[0]}</p>
+                  <p className="text-white font-black">{r.odds_a}</p>
+                </div>
+                <div className={`rounded px-3 py-2 text-center text-xs font-bold ${r.pick === r.fighter_b ? 'bg-[#b01c1c]/20 border border-[#b01c1c]/40' : 'bg-[#0a0a0a] border border-[#1a1a1a]'}`}>
+                  <p className="text-gray-400 text-xs mb-0.5">{r.fighter_b || r.fight.split(' vs ')[1]}</p>
+                  <p className="text-white font-black">{r.odds_b}</p>
+                </div>
+              </div>
+
+              {/* Stats row */}
+              <div className="flex items-center gap-4 mb-3">
+                <div>
+                  <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Confidence</p>
+                  <ConfidenceDots value={r.confidence} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Units</p>
+                  <p className="text-white font-black text-sm">{r.units}u</p>
+                </div>
+              </div>
+
+              {/* Reasoning */}
+              <p className="text-gray-400 text-xs leading-relaxed mb-4">{r.reasoning}</p>
+
+              {/* Actions */}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => {
+                    onUsePick({
+                      fighter_a: r.fighter_a || r.fight.split(' vs ')[0]?.trim(),
+                      fighter_b: r.fighter_b || r.fight.split(' vs ')[1]?.trim(),
+                      pick: r.pick,
+                      odds: r.odds,
+                      units: String(r.units || 1),
+                      analysis: r.reasoning,
+                      event_name: r.event,
+                      fight_date: r.date,
+                    })
+                    document.getElementById('add-pick-form')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="px-3 py-1.5 bg-[#b01c1c] text-white text-xs font-black uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors cursor-pointer"
+                >
+                  Use This Pick
+                </button>
+                <button
+                  onClick={() => saveDraft(r, i)}
+                  disabled={savingPick === i || savedIds.has(i)}
+                  className={`px-3 py-1.5 text-xs font-black uppercase tracking-widest rounded transition-colors cursor-pointer border ${savedIds.has(i) ? 'border-green-500 text-green-500' : 'border-[#2a2a2a] text-gray-400 hover:border-white hover:text-white'} disabled:opacity-50`}
+                >
+                  {savedIds.has(i) ? '✓ Saved' : savingPick === i ? 'Saving...' : 'Save Draft'}
+                </button>
+                <button
+                  onClick={() => postToDiscord(r, i)}
+                  disabled={postingDiscord === i}
+                  className="px-3 py-1.5 border border-[#2a2a2a] text-gray-400 text-xs font-black uppercase tracking-widest rounded hover:border-white hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {postingDiscord === i ? 'Posting...' : 'Post to Discord'}
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -404,7 +518,10 @@ export default function AdminPage() {
         </div>
 
         {/* AI Analyzer */}
-        <AIAnalyzer onUsePick={(pick) => setForm((f) => ({ ...f, ...pick }))} />
+        <AIAnalyzer
+          adminPassword={getAdminPassword()}
+          onUsePick={(pick) => setForm((f) => ({ ...f, ...pick }))}
+        />
 
         {/* Add New Pick */}
         <div id="add-pick-form" className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-6 mb-10">
