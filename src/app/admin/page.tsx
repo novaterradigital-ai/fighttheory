@@ -654,6 +654,19 @@ export default function AdminPage() {
     }
   }
 
+  async function handleDeletePick(id: string) {
+    if (!confirm('Delete this pick? This cannot be undone.')) return
+    try {
+      const res = await fetch(`/api/admin/picks/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-password': getAdminPassword() },
+      })
+      if (res.ok) setPicks((prev) => prev.filter((p) => p.id !== id))
+    } catch {
+      // silently fail
+    }
+  }
+
   const totalPL = picks.filter((p) => p.result !== 'PENDING').reduce((acc, p) => acc + p.profit_loss, 0)
   const wins = picks.filter((p) => p.result === 'WIN').length
   const losses = picks.filter((p) => p.result === 'LOSS').length
@@ -1003,25 +1016,30 @@ export default function AdminPage() {
                           </button>
                         </td>
                         <td className="px-4 py-3">
-                          {pick.result === 'PENDING' && (
-                            <div className="flex gap-1">
-                              {(['WIN', 'LOSS', 'PUSH'] as const).map((r) => (
-                                <button
-                                  key={r}
-                                  onClick={() => handleUpdateResult(pick, r)}
-                                  className={`px-2 py-0.5 text-xs font-bold uppercase rounded cursor-pointer transition-opacity duration-150 hover:opacity-80 ${
-                                    r === 'WIN'
-                                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                      : r === 'LOSS'
-                                      ? 'bg-red-500/20 text-[#b01c1c] border border-red-500/30'
-                                      : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                                  }`}
-                                >
-                                  {r}
-                                </button>
-                              ))}
-                            </div>
-                          )}
+                          <div className="flex gap-1 items-center">
+                            {pick.result === 'PENDING' && (['WIN', 'LOSS', 'PUSH'] as const).map((r) => (
+                              <button
+                                key={r}
+                                onClick={() => handleUpdateResult(pick, r)}
+                                className={`px-2 py-0.5 text-xs font-bold uppercase rounded cursor-pointer transition-opacity duration-150 hover:opacity-80 ${
+                                  r === 'WIN'
+                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                    : r === 'LOSS'
+                                    ? 'bg-red-500/20 text-[#b01c1c] border border-red-500/30'
+                                    : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                                }`}
+                              >
+                                {r}
+                              </button>
+                            ))}
+                            <button
+                              onClick={() => handleDeletePick(pick.id)}
+                              className="px-2 py-0.5 text-xs font-bold uppercase rounded cursor-pointer hover:opacity-80 bg-[#1a0000] text-[#b01c1c] border border-[#b01c1c]/20 ml-1"
+                              title="Delete pick"
+                            >
+                              ✕
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
