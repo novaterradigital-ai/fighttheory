@@ -9,8 +9,9 @@ export default function HomePage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="w-full pt-16">
-        <div className="relative w-full overflow-hidden max-h-[75vh]">
+      <section className="w-full pt-16 relative">
+        {/* Image capped at 70vh */}
+        <div className="w-full overflow-hidden" style={{maxHeight: '70vh'}}>
           <Image
             src="/hero2.png"
             alt="Fight Theory — Calculated Picks. Real Fight Analysis."
@@ -19,23 +20,22 @@ export default function HomePage() {
             className="w-full h-auto block"
             priority
           />
-          {/* Bottom fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
-          {/* Overlaid CTA buttons */}
-          <div className="absolute bottom-8 left-0 right-0 px-4 flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-lg mx-auto">
-            <Link
-              href="/picks"
-              className="flex-1 py-4 bg-white text-black font-black uppercase tracking-widest text-sm rounded hover:bg-gray-200 transition-colors duration-200 text-center"
-            >
-              View Public Picks
-            </Link>
-            <Link
-              href="/inner-circle"
-              className="flex-1 py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
-            >
-              Join Inner Circle — $48/mo
-            </Link>
-          </div>
+        </div>
+        {/* Fade + buttons overlaid at the bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent pointer-events-none" />
+        <div className="absolute bottom-6 left-0 right-0 px-4 flex flex-col sm:flex-row gap-3 justify-center items-center max-w-lg mx-auto">
+          <Link
+            href="/picks"
+            className="w-full sm:flex-1 py-4 bg-white text-black font-black uppercase tracking-widest text-sm rounded hover:bg-gray-200 transition-colors duration-200 text-center"
+          >
+            View Public Picks
+          </Link>
+          <Link
+            href="/inner-circle"
+            className="w-full sm:flex-1 py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
+          >
+            Join Inner Circle — $48/mo
+          </Link>
         </div>
       </section>
 
