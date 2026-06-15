@@ -10,6 +10,7 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="w-full pt-16">
+        {/* Image container — fixed height on desktop only */}
         <div className="relative w-full overflow-hidden md:h-[70vh]">
           <Image
             src="/hero2.png"
@@ -20,10 +21,10 @@ export default function HomePage() {
             style={{objectPosition: 'center 70%'}}
             priority
           />
-          {/* Bottom fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
-          {/* Overlaid CTA buttons */}
-          <div className="absolute bottom-8 left-0 right-0 px-4 flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center max-w-lg mx-auto">
+          {/* Bottom fade — desktop only */}
+          <div className="hidden md:block absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
+          {/* Overlaid CTA — desktop only */}
+          <div className="hidden md:flex absolute bottom-8 left-0 right-0 px-4 flex-row gap-3 justify-center items-center max-w-lg mx-auto">
             <Link
               href="/picks"
               className="flex-1 py-4 bg-white text-black font-black uppercase tracking-widest text-sm rounded hover:bg-gray-200 transition-colors duration-200 text-center"
@@ -37,6 +38,21 @@ export default function HomePage() {
               Join Inner Circle — $48/mo
             </Link>
           </div>
+        </div>
+        {/* CTA buttons — mobile only, below image */}
+        <div className="md:hidden bg-black px-4 pt-4 pb-8 flex flex-col gap-3 max-w-lg mx-auto">
+          <Link
+            href="/picks"
+            className="py-4 bg-white text-black font-black uppercase tracking-widest text-sm rounded hover:bg-gray-200 transition-colors duration-200 text-center"
+          >
+            View Public Picks
+          </Link>
+          <Link
+            href="/inner-circle"
+            className="py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
+          >
+            Join Inner Circle — $48/mo
+          </Link>
         </div>
       </section>
 
