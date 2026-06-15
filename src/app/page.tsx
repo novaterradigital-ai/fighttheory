@@ -13,7 +13,7 @@ export default function HomePage() {
         {/* Hero image — fades into black at bottom */}
         <div className="relative w-full overflow-hidden">
           <Image
-            src="/hero.png"
+            src="/hero2.png"
             alt="Fight Theory — Calculated Picks. Real Fight Analysis."
             width={1920}
             height={640}
