@@ -276,10 +276,8 @@ export default function AdminPage() {
       {/* Admin Nav */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur border-b border-[#1a1a1a] h-14 flex items-center px-4 justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 bg-[#b01c1c] flex items-center justify-center rounded-sm">
-            <span className="text-white font-black text-xs">FT</span>
-          </div>
-          <span className="text-white font-black uppercase tracking-widest text-sm">Admin</span>
+          <img src="/logo.png" alt="Fight Theory" className="h-8 w-auto object-contain" />
+          <span className="text-gray-500 font-bold uppercase tracking-widest text-xs">Admin</span>
         </div>
         <button
           onClick={logout}
