@@ -18,15 +18,7 @@ export async function POST(req: NextRequest) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price_data: {
-            currency: 'usd',
-            unit_amount: 6700,
-            recurring: { interval: 'month' },
-            product_data: {
-              name: 'Fight Theory VIP',
-              description: 'Monthly Inner Circle membership — premium picks & analysis',
-            },
-          },
+          price: 'price_1TiaQDHnp1pGMuzNtF6ZiHta',
           quantity: 1,
         },
       ],
