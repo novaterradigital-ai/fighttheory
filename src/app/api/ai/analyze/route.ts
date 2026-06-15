@@ -85,15 +85,19 @@ export async function POST(req: NextRequest) {
           )
         : allEvents
 
-    const oddsText =
-      filtered.length > 0
-        ? filtered
-            .map(
-              (e) =>
-                `${e.fighter_a} (${e.odds_a ?? 'N/A'}) vs ${e.fighter_b} (${e.odds_b ?? 'N/A'}) — ${e.event} on ${new Date(e.date).toLocaleDateString()}`
-            )
-            .join('\n')
-        : 'No live odds available at this time.'
+    if (filtered.length === 0) {
+      return NextResponse.json({ analysis: [], fights_found: 0 })
+    }
+
+    // Limit to 10 fights to avoid token limits
+    const limited = filtered.slice(0, 10)
+
+    const oddsText = limited
+      .map(
+        (e) =>
+          `${e.fighter_a} (${e.odds_a ?? 'N/A'}) vs ${e.fighter_b} (${e.odds_b ?? 'N/A'}) — ${e.event} on ${new Date(e.date).toLocaleDateString()}`
+      )
+      .join('\n')
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -123,7 +127,7 @@ export async function POST(req: NextRequest) {
       analysis = []
     }
 
-    return NextResponse.json({ analysis, fights_found: filtered.length })
+    return NextResponse.json({ analysis, fights_found: limited.length })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Analysis failed'
     return NextResponse.json({ error: message }, { status: 500 })
