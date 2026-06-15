@@ -20,7 +20,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 cursor-pointer">
           <Image
-            src="/logo.png"
+            src="/logo2.png"
             alt="Fight Theory"
             width={160}
             height={44}
