@@ -234,11 +234,9 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
         <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-lg p-8 w-full max-w-sm">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-9 h-9 bg-[#b01c1c] flex items-center justify-center rounded-sm">
-              <span className="text-white font-black text-sm">FT</span>
-            </div>
-            <span className="text-white font-black uppercase tracking-widest">Admin</span>
+          <div className="flex flex-col items-center gap-2 mb-8">
+            <img src="/logo.png" alt="Fight Theory" className="h-12 w-auto object-contain" />
+            <span className="text-gray-500 font-bold uppercase tracking-widest text-xs">Admin</span>
           </div>
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <div>
