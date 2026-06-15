@@ -10,13 +10,12 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="w-full pt-16">
-        <div className="relative w-full overflow-hidden max-h-[75vh]">
+        <div className="relative w-full overflow-hidden" style={{height: '70vh'}}>
           <Image
             src="/hero2.png"
             alt="Fight Theory — Calculated Picks. Real Fight Analysis."
-            width={1920}
-            height={640}
-            className="w-full h-auto block"
+            fill
+            className="object-cover object-top"
             priority
           />
           {/* Bottom fade */}
