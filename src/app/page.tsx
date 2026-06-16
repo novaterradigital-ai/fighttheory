@@ -121,10 +121,8 @@ export default function HomePage() {
               </div>
               <ul className="flex flex-col gap-2">
                 {[
-                  'Selected public picks',
-                  'Full verified record',
-                  'Performance stats',
-                  'Fight card breakdowns',
+                  'Free picks every event',
+                  'Win/loss record & stats',
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-3 text-sm text-gray-300">
                     <svg className="w-4 h-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
