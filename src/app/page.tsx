@@ -35,7 +35,7 @@ export default function HomePage() {
               href="/inner-circle"
               className="flex-1 py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
             >
-              Join Inner Circle — $68/mo
+              Join Inner Circle — $68 First Month
             </Link>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function HomePage() {
             href="/inner-circle"
             className="py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
           >
-            Join Inner Circle — $68/mo
+            Join Inner Circle — $68 First Month
           </Link>
         </div>
       </section>
@@ -153,7 +153,7 @@ export default function HomePage() {
                   <p className="text-base text-gray-600 line-through">$98</p>
                   <p className="text-3xl font-black text-white">$68<span className="text-base text-gray-500 font-semibold">/mo</span></p>
                 </div>
-                <p className="text-gray-500 text-xs mt-1">Founding member price · Locked in for life</p>
+                <p className="text-gray-500 text-xs mt-1">$68 first month · Then $98/mo · Cancel anytime</p>
               </div>
               <ul className="flex flex-col gap-2">
                 {[
@@ -176,7 +176,7 @@ export default function HomePage() {
                 href="/inner-circle"
                 className="mt-auto block text-center px-6 py-3 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200"
               >
-                Join Inner Circle — $68/mo
+                Join Inner Circle — $68 First Month
               </Link>
             </div>
           </div>

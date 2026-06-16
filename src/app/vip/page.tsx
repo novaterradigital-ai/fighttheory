@@ -89,9 +89,9 @@ export default function VIPPage() {
             <div className="bg-[#b01c1c] px-8 py-5 text-center">
               <p className="text-white font-black uppercase tracking-widest text-sm mb-1">VIP Membership</p>
               <p className="text-white text-5xl font-black">
-                $68<span className="text-xl font-semibold opacity-70">/mo</span>
+                $68<span className="text-xl font-semibold opacity-70"> first month</span>
               </p>
-              <p className="text-white/70 text-xs mt-1">Cancel anytime, no contracts</p>
+              <p className="text-white/70 text-xs mt-1">Then $98/mo · Cancel anytime, no contracts</p>
             </div>
 
             {/* Features */}
@@ -127,7 +127,7 @@ export default function VIPPage() {
                     Redirecting to Checkout...
                   </>
                 ) : (
-                  'Subscribe — $68/mo'
+                  'Join Inner Circle — $68 First Month, Then $98/mo'
                 )}
               </button>
 

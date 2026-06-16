@@ -76,7 +76,7 @@ export default function VIPPage() {
             <div className="w-2 h-2 rounded-full bg-[#b01c1c] animate-pulse flex-shrink-0" />
             <p className="text-sm text-gray-300 leading-snug">
               <span className="text-white font-bold">Founding member pricing.</span>{' '}
-              Lock in ${LAUNCH_PRICE}/mo before it goes to ${REGULAR_PRICE}. Price is guaranteed for life as long as you stay subscribed.
+              First month is ${LAUNCH_PRICE}, then ${REGULAR_PRICE}/mo after that. Cancel anytime.
             </p>
           </div>
         </div>
