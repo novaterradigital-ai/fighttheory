@@ -92,7 +92,7 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
       await fetch('/api/discord', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: msg }),
+        body: JSON.stringify({ content: msg, tier: 'INNER_CIRCLE' }),
       })
     } catch {
       // silent
@@ -223,7 +223,7 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
                     await fetch('/api/discord', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ content: msg }),
+                      body: JSON.stringify({ content: msg, tier: 'INNER_CIRCLE' }),
                     })
                   }}
                   className="px-3 py-1.5 border border-[#2a2a2a] text-gray-400 text-xs font-black uppercase tracking-widest rounded hover:border-white hover:text-white transition-colors cursor-pointer"
@@ -310,7 +310,7 @@ function AIAnalyzer({ onUsePick, adminPassword }: {
                       await fetch('/api/discord', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ content: msg }),
+                        body: JSON.stringify({ content: msg, tier: 'INNER_CIRCLE' }),
                       })
                     }}
                     className="px-3 py-1.5 border border-[#2a2a2a] text-gray-400 text-xs font-black uppercase tracking-widest rounded hover:border-white hover:text-white transition-colors cursor-pointer"
@@ -1032,6 +1032,20 @@ export default function AdminPage() {
                                 {r}
                               </button>
                             ))}
+                            <button
+                              onClick={async () => {
+                                const msg = `${pick.tier === 'FREE' ? '🆓' : '🔒'} **FIGHT THEORY ${pick.tier === 'FREE' ? 'FREE' : 'INNER CIRCLE'} PICK**\n\n**${pick.fighter_a} vs ${pick.fighter_b}**\n📅 ${pick.fight_date} — ${pick.event_name}\n\n✅ **Pick: ${pick.pick}** (${pick.odds})\n📊 Units: ${pick.units}u\n\n_Fight Theory — Calculated Picks. Real Fight Analysis._`
+                                await fetch('/api/discord', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ content: msg, tier: pick.tier }),
+                                })
+                              }}
+                              className="px-2 py-0.5 text-xs font-bold uppercase rounded cursor-pointer hover:opacity-80 bg-[#0a0a1a] text-blue-400 border border-blue-400/20 ml-1"
+                              title="Post to Discord"
+                            >
+                              Discord
+                            </button>
                             <button
                               onClick={() => handleDeletePick(pick.id)}
                               className="px-2 py-0.5 text-xs font-bold uppercase rounded cursor-pointer hover:opacity-80 bg-[#1a0000] text-[#b01c1c] border border-[#b01c1c]/20 ml-1"
