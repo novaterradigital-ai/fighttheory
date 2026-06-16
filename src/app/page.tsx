@@ -56,6 +56,14 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* AI Badge */}
+      <div className="bg-black py-3 px-4 flex justify-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#b01c1c]/30 rounded-full bg-[#b01c1c]/10">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#b01c1c] animate-pulse" />
+          <span className="text-xs font-bold uppercase tracking-widest text-[#b01c1c]">AI-Powered Fight Analysis</span>
+        </div>
+      </div>
+
       {/* Stats Bar */}
       <section className="py-8 px-4 border-y border-[#1a1a1a] bg-[#050505]">
         <div className="max-w-6xl mx-auto">

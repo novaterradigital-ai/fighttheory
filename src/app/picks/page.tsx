@@ -73,6 +73,10 @@ export default function PicksPage() {
             Free <span className="text-[#b01c1c]">Picks</span>
           </h1>
           <p className="text-gray-500 text-sm">Public picks — updated with every event</p>
+          <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 border border-[#b01c1c]/30 rounded-full bg-[#b01c1c]/10">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#b01c1c] animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-widest text-[#b01c1c]">AI-Powered Analysis</span>
+          </div>
         </div>
 
         {/* Stats */}
