@@ -35,7 +35,7 @@ export default function HomePage() {
               href="/inner-circle"
               className="flex-1 py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
             >
-              Join Inner Circle — $48/mo
+              Join Inner Circle — $68/mo
             </Link>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function HomePage() {
             href="/inner-circle"
             className="py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
           >
-            Join Inner Circle — $48/mo
+            Join Inner Circle — $68/mo
           </Link>
         </div>
       </section>
@@ -145,15 +145,15 @@ export default function HomePage() {
             {/* Inner Circle */}
             <div className="bg-[#0a0a0a] border border-[#b01c1c]/50 rounded-lg p-6 flex flex-col gap-4 relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-[#b01c1c] text-white text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-bl">
-                Launch Price
+                Founding Member
               </div>
               <div>
                 <h3 className="text-lg font-black uppercase tracking-wide text-[#b01c1c] mb-1">Inner Circle</h3>
                 <div className="flex items-baseline gap-2">
-                  <p className="text-base text-gray-600 line-through">$68</p>
-                  <p className="text-3xl font-black text-white">$48<span className="text-base text-gray-500 font-semibold">/mo</span></p>
+                  <p className="text-base text-gray-600 line-through">$98</p>
+                  <p className="text-3xl font-black text-white">$68<span className="text-base text-gray-500 font-semibold">/mo</span></p>
                 </div>
-                <p className="text-gray-500 text-xs mt-1">First 20 spots only · Locked in for life</p>
+                <p className="text-gray-500 text-xs mt-1">Founding member price · Locked in for life</p>
               </div>
               <ul className="flex flex-col gap-2">
                 {[
@@ -176,7 +176,7 @@ export default function HomePage() {
                 href="/inner-circle"
                 className="mt-auto block text-center px-6 py-3 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200"
               >
-                Join Inner Circle — $48/mo
+                Join Inner Circle — $68/mo
               </Link>
             </div>
           </div>

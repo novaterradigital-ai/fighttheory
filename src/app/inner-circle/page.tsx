@@ -3,9 +3,8 @@
 import { useState } from 'react'
 import Navbar from '@/components/Navbar'
 
-const LAUNCH_PRICE = 48
-const REGULAR_PRICE = 68
-const LAUNCH_SPOTS = 20
+const LAUNCH_PRICE = 68
+const REGULAR_PRICE = 98
 
 const features = [
   'Every pick we make — nothing held back',
@@ -76,7 +75,7 @@ export default function VIPPage() {
           <div className="bg-[#b01c1c]/10 border border-[#b01c1c]/40 rounded-lg px-5 py-4 flex items-center gap-4">
             <div className="w-2 h-2 rounded-full bg-[#b01c1c] animate-pulse flex-shrink-0" />
             <p className="text-sm text-gray-300 leading-snug">
-              <span className="text-white font-bold">Launch pricing — {LAUNCH_SPOTS} spots only.</span>{' '}
+              <span className="text-white font-bold">Founding member pricing.</span>{' '}
               Lock in ${LAUNCH_PRICE}/mo before it goes to ${REGULAR_PRICE}. Price is guaranteed for life as long as you stay subscribed.
             </p>
           </div>
@@ -97,7 +96,7 @@ export default function VIPPage() {
           <div className="bg-[#0a0a0a] border border-[#b01c1c]/50 rounded-lg overflow-hidden">
             {/* Card Header */}
             <div className="bg-[#b01c1c] px-8 py-5 text-center">
-              <p className="text-white/70 font-bold uppercase tracking-widest text-xs mb-2">Inner Circle — Launch Price</p>
+              <p className="text-white/70 font-bold uppercase tracking-widest text-xs mb-2">Inner Circle — Founding Member Price</p>
               <div className="flex items-center justify-center gap-3">
                 <p className="text-white/40 text-2xl font-bold line-through">${REGULAR_PRICE}</p>
                 <p className="text-white text-5xl font-black">
@@ -140,7 +139,7 @@ export default function VIPPage() {
                     Redirecting...
                   </>
                 ) : (
-                  `Lock In $${LAUNCH_PRICE}/mo — ${LAUNCH_SPOTS} Spots Only`
+                  `Join Inner Circle — $${LAUNCH_PRICE}/mo`
                 )}
               </button>
 
