@@ -33,13 +33,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           <Link
             href="/"
-            className="px-5 py-2 bg-[#b01c1c] text-white text-sm font-bold uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors duration-200 cursor-pointer"
+            className="text-sm font-bold uppercase tracking-widest text-[#b01c1c] hover:opacity-80 transition-opacity duration-200 cursor-pointer"
           >
             Home
           </Link>
           <Link
             href="/picks"
-            className="px-5 py-2 bg-white text-black text-sm font-bold uppercase tracking-widest rounded hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
+            className="text-sm font-bold uppercase tracking-widest text-white hover:opacity-80 transition-opacity duration-200 cursor-pointer"
           >
             Picks
           </Link>
@@ -81,14 +81,14 @@ export default function Navbar() {
           <Link
             href="/"
             onClick={() => setMenuOpen(false)}
-            className="px-5 py-2 bg-[#b01c1c] text-white text-sm font-bold uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors duration-200 text-center cursor-pointer"
+            className="text-sm font-bold uppercase tracking-widest text-[#b01c1c] hover:opacity-80 transition-opacity duration-200 cursor-pointer"
           >
             Home
           </Link>
           <Link
             href="/picks"
             onClick={() => setMenuOpen(false)}
-            className="px-5 py-2 bg-white text-black text-sm font-bold uppercase tracking-widest rounded hover:bg-gray-200 transition-colors duration-200 text-center cursor-pointer"
+            className="text-sm font-bold uppercase tracking-widest text-white hover:opacity-80 transition-opacity duration-200 cursor-pointer"
           >
             Picks
           </Link>
