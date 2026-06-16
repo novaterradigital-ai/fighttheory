@@ -22,7 +22,7 @@ export default function HomePage() {
             priority
           />
           {/* AI badge — top of hero */}
-          <div className="absolute top-6 left-0 right-0 flex justify-center">
+          <div className="absolute top-2 left-0 right-0 flex justify-center">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#b01c1c]/50 rounded-full bg-black/60 backdrop-blur-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-[#b01c1c] animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-widest text-[#b01c1c]">AI Powered Fight Analysis</span>
