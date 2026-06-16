@@ -21,13 +21,6 @@ export default function HomePage() {
             style={{objectPosition: 'center 70%'}}
             priority
           />
-          {/* AI badge — top of hero */}
-          <div className="absolute top-4 left-0 right-0 flex justify-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#b01c1c]/50 rounded-full bg-black/60 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#b01c1c] animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-widest text-[#b01c1c]">AI Powered Fight Analysis</span>
-            </div>
-          </div>
           {/* Bottom fade — desktop only */}
           <div className="hidden md:block absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
           {/* Overlaid CTA — desktop only */}
@@ -62,14 +55,6 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
-
-      {/* AI Badge */}
-      <div className="bg-black py-3 px-4 flex justify-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-[#b01c1c]/30 rounded-full bg-[#b01c1c]/10">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#b01c1c] animate-pulse" />
-          <span className="text-xs font-bold uppercase tracking-widest text-[#b01c1c]">AI-Powered Fight Analysis</span>
-        </div>
-      </div>
 
       {/* Stats Bar */}
       <section className="py-8 px-4 border-y border-[#1a1a1a] bg-[#050505]">
