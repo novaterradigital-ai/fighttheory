@@ -10,7 +10,6 @@ export default function Navbar() {
   const pathname = usePathname()
 
   const navLinks = [
-    { href: '/record', label: 'Record' },
     { href: '/picks', label: 'Picks' },
   ]
 
