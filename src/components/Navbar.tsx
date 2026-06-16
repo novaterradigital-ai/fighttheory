@@ -33,7 +33,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           <Link
             href="/"
-            className="text-sm font-bold uppercase tracking-widest text-[#b01c1c] hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+            className="text-sm font-bold uppercase tracking-widest text-white hover:opacity-80 transition-opacity duration-200 cursor-pointer"
           >
             Home
           </Link>
@@ -81,7 +81,7 @@ export default function Navbar() {
           <Link
             href="/"
             onClick={() => setMenuOpen(false)}
-            className="text-sm font-bold uppercase tracking-widest text-[#b01c1c] hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+            className="text-sm font-bold uppercase tracking-widest text-white hover:opacity-80 transition-opacity duration-200 cursor-pointer"
           >
             Home
           </Link>
