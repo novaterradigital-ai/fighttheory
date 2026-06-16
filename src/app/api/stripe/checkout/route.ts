@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      discounts: [{ coupon: '20d7YQnV' }],
       customer_email: email || undefined,
       success_url: `${origin}/vip/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/vip`,
