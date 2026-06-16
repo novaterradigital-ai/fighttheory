@@ -34,11 +34,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-semibold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${
-                pathname === link.href
-                  ? 'text-[#b01c1c]'
-                  : 'text-gray-400 hover:text-white'
-              }`}
+              className="px-5 py-2 bg-white text-black text-sm font-bold uppercase tracking-widest rounded hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
             >
               {link.label}
             </Link>
