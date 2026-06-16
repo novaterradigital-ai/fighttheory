@@ -18,10 +18,11 @@ export async function POST(req: NextRequest) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: 'price_1TiaQDHnp1pGMuzNtF6ZiHta',
+          price: 'price_1TiocHHnp1pGMuzNQfd9dDei',
           quantity: 1,
         },
       ],
+      discounts: [{ coupon: 'c4KuW0o4' }],
       customer_email: email || undefined,
       success_url: `${origin}/vip/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/vip`,
