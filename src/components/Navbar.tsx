@@ -30,9 +30,9 @@ export default function Navbar() {
         </Link>
 
         {/* AI Badge — center */}
-        <div className="flex absolute left-1/2 -translate-x-1/2 items-center gap-2 px-4 py-1.5 border border-[#b01c1c]/50 rounded-full bg-black/60 backdrop-blur-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#b01c1c] animate-pulse" />
-          <span className="text-xs font-bold uppercase tracking-widest text-[#b01c1c]">AI Powered Fight Analysis</span>
+        <div className="flex absolute left-1/2 -translate-x-1/2 items-center gap-1.5 px-3 py-1 border border-[#b01c1c]/50 rounded-full bg-black/60 backdrop-blur-sm whitespace-nowrap">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#b01c1c] animate-pulse flex-shrink-0" />
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#b01c1c]">AI Powered Fight Analysis</span>
         </div>
 
         {/* Desktop Nav */}
