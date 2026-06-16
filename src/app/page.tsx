@@ -35,7 +35,7 @@ export default function HomePage() {
               href="/inner-circle"
               className="flex-1 py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
             >
-              Join Inner Circle — $68 First Month
+              Join Inner Circle
             </Link>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function HomePage() {
             href="/inner-circle"
             className="py-4 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200 text-center"
           >
-            Join Inner Circle — $68 First Month
+            Join Inner Circle
           </Link>
         </div>
       </section>
@@ -176,7 +176,7 @@ export default function HomePage() {
                 href="/inner-circle"
                 className="mt-auto block text-center px-6 py-3 bg-[#b01c1c] text-white font-black uppercase tracking-widest text-sm rounded hover:bg-[#8b1010] transition-colors duration-200"
               >
-                Join Inner Circle — $68 First Month
+                Join Inner Circle
               </Link>
             </div>
           </div>
