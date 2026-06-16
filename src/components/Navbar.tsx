@@ -31,19 +31,18 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-semibold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${
-                pathname === link.href
-                  ? 'text-[#b01c1c]'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Link
+            href="/"
+            className="px-5 py-2 bg-[#b01c1c] text-white text-sm font-bold uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors duration-200 cursor-pointer"
+          >
+            Home
+          </Link>
+          <Link
+            href="/picks"
+            className="px-5 py-2 bg-white text-black text-sm font-bold uppercase tracking-widest rounded hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
+          >
+            Picks
+          </Link>
           <Link
             href="/inner-circle"
             className="px-5 py-2 bg-[#b01c1c] text-white text-sm font-bold uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors duration-200 cursor-pointer"
@@ -79,20 +78,20 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-[#0a0a0a] border-t border-[#1a1a1a] px-4 py-4 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className={`text-sm font-semibold uppercase tracking-widest transition-colors duration-200 cursor-pointer ${
-                pathname === link.href
-                  ? 'text-[#b01c1c]'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Link
+            href="/"
+            onClick={() => setMenuOpen(false)}
+            className="px-5 py-2 bg-[#b01c1c] text-white text-sm font-bold uppercase tracking-widest rounded hover:bg-[#8b1010] transition-colors duration-200 text-center cursor-pointer"
+          >
+            Home
+          </Link>
+          <Link
+            href="/picks"
+            onClick={() => setMenuOpen(false)}
+            className="px-5 py-2 bg-white text-black text-sm font-bold uppercase tracking-widest rounded hover:bg-gray-200 transition-colors duration-200 text-center cursor-pointer"
+          >
+            Picks
+          </Link>
           <Link
             href="/inner-circle"
             onClick={() => setMenuOpen(false)}
