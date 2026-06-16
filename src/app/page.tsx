@@ -155,12 +155,12 @@ export default function HomePage() {
               </div>
               <ul className="flex flex-col gap-2">
                 {[
-                  'Every pick we make',
-                  'Full written analysis on each fight',
+                  'Every pick we make — nothing held back',
+                  'AI-powered breakdown on every fight',
+                  'Fight breakdowns before every event',
                   'Early access before lines move',
                   'Unit sizing on every play',
                   'Private Discord access',
-                  'Direct line to the analyst',
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-3 text-sm text-gray-300">
                     <svg className="w-4 h-4 text-[#b01c1c] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
