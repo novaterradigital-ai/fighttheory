@@ -9,7 +9,6 @@ const REGULAR_PRICE = 98
 const features = [
   'Every pick we make — nothing held back',
   'AI-powered breakdown on every fight',
-  'Fight breakdowns before every event',
   'Early access before lines move',
   'Unit sizing on every play',
   'Private Discord access',
